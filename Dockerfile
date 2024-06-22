@@ -9,10 +9,10 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["IdentityService/IdentityService.csproj", "IdentityService/"]
-RUN dotnet restore "./IdentityService/IdentityService.csproj"
+COPY ["IdentityService.csproj", "./"]
+RUN dotnet restore "./IdentityService.csproj"
 COPY . .
-WORKDIR "/src/IdentityService"
+WORKDIR "/src"
 RUN dotnet build "./IdentityService.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish

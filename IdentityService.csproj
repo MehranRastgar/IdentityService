@@ -36,9 +36,9 @@
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.6.0" />
   </ItemGroup>
   <ItemGroup>
-    <Protobuf Include="Shared\Protos\Protos\devices.proto" GrpcServices="Server" />
-    <Protobuf Include="Shared\Protos\Protos\devices.proto" GrpcServices="Client" />
-    <Protobuf Include="Shared\Protos\Protos\organizations.proto" GrpcServices="Client" />
+    <Protobuf Include="Shared\Protos\devices.proto" GrpcServices="Server" />
+    <Protobuf Include="Shared\Protos\devices.proto" GrpcServices="Client" />
+    <Protobuf Include="Shared\Protos\organizations.proto" GrpcServices="Client" />
     
   </ItemGroup>
 
