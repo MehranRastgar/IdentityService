@@ -52,11 +52,27 @@ builder.Services.AddScoped<IPermissionManager, PermissionManager>();
 builder.Services.AddScoped<IPermissionStoreService, PermissionStoreService>();
 
 
+
+
+
+builder.Services.AddGrpcClient<OrganizationService.OrganizationServiceClient>(options =>
+{
+  options.Address = new Uri(builder.Configuration["GrpcSettings:AssetManagerUrl"]);
+}).ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+{
+  ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator,
+});
+
+builder.Services.AddScoped<OrganizationGrpcClient>();
+
+
+
+
 builder.Services.AddCors(options =>
 {
   options.AddPolicy("MyCorsPolicy", builder =>
   {
-    builder.WithOrigins(["http://localhost:3000", "http://sprun.ir", "https://sprun.ir", "http://localhost:10500"]) // Specify the allowed origin(s)
+    builder.WithOrigins(["http://localhost:3000", "https://localhost:10502/", "http://sprun.ir", "https://sprun.ir", "http://localhost:10500"]) // Specify the allowed origin(s)
            .AllowAnyMethod()
            .AllowAnyHeader()
            .AllowCredentials(); // Adjust the policy according to your needs
@@ -88,14 +104,7 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddImageSharp();
 
-builder.Services.AddGrpcClient<OrganizationService.OrganizationServiceClient>(options =>
-{
-  options.Address = new Uri(builder.Configuration["GrpcSettings:AssetManagerUrl"]);
-}).ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
-{
-  ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator,
-  // Additional configuration if needed
-});
+
 
 var app = builder.Build();
 
