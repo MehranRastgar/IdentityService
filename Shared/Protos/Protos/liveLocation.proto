@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+option csharp_namespace = "FmsProtos.Grpc";
+package liveLocation;
+
+service LiveLocationService {
+  rpc SubscribeLocation (LocationSubscriptionRequest) returns (stream LocationUpdate) {}
+}
+
+message LocationSubscriptionRequest {
+  string imei = 1;
+}
+
+message LocationUpdate {
+  string imei = 1;
+  double latitude = 2;
+  double longitude = 3;
+  string TimeStamp = 4;
+
+}

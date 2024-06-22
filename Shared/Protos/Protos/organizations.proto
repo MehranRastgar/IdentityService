@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+option csharp_namespace = "FmsProtos.Grpc";
+
+package organization;
+
+service OrganizationService {
+  rpc GetOrganizations (GetOrganizationsRequest) returns (GetOrganizationsResponse);
+}
+
+message GetOrganizationsRequest {
+  int32 userOrganizationId = 1;
+  int32 pageNumber = 2;
+  int32 pageSize = 3;
+  string query = 4;
+  bool asc = 5;
+  string sortBy = 6;
+}
+
+message GetOrganizationsResponse {
+  repeated Organization organizations = 1;
+  int32 totalItems = 2;
+  int32 totalPages = 3;
+  int32 currentPage = 4;
+  int32 pageSize = 5;
+}
+
+message Organization {
+  int32 id = 1;
+  string name = 2;
+  string description = 3;
+  string phoneNumber = 4;
+}
