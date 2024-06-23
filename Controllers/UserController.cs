@@ -60,8 +60,6 @@ namespace IdentityService.Controllers
     }
 
 
-
-
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] UserCreateDto userCreate)
     {
