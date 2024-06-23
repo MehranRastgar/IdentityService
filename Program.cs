@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using FmsProtos.Grpc;
+using StackExchange.Redis;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -38,6 +39,13 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+// Configure Redis
+builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
+{
+    var configuration = ConfigurationOptions.Parse(builder.Configuration.GetConnectionString("Redis"), true);
+    return ConnectionMultiplexer.Connect(configuration);
+});
+
 // Add Identity services and configure role management
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -50,7 +58,13 @@ builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IPermissionManager, PermissionManager>();
 builder.Services.AddScoped<IPermissionStoreService, PermissionStoreService>();
+builder.Services.AddScoped<IRedisService, RedisService>();
 
+// Register the SmsPanel
+builder.Services.AddScoped<SmsPanel>();
+builder.Services.AddScoped<MailPanel>();
+
+MassTransitConfig.ConfigureMassTransit(builder.Services, builder.Configuration);
 
 
 
