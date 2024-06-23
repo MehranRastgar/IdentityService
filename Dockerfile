@@ -18,6 +18,7 @@ RUN dotnet build "./IdentityService.csproj" -c $BUILD_CONFIGURATION -o /app/buil
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
 RUN dotnet publish "./IdentityService.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN USER=app chown -R app:app /app
 
 FROM base AS final
 WORKDIR /app

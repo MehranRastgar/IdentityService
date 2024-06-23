@@ -17,6 +17,7 @@ services:
     volumes:
       - ./certs:/https:ro
       - ./Shared/Protos:/src/Shared/Protos:ro
+      # - ./wwwroot/images:/src/wwwroot/images:rw
     networks:
       - identity-network
 
