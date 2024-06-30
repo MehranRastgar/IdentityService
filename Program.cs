@@ -42,8 +42,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // Configure Redis
 builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
 {
-    var configuration = ConfigurationOptions.Parse(builder.Configuration.GetConnectionString("Redis"), true);
-    return ConnectionMultiplexer.Connect(configuration);
+  var configuration = ConfigurationOptions.Parse(builder.Configuration.GetConnectionString("Redis"), true);
+  return ConnectionMultiplexer.Connect(configuration);
 });
 
 // Add Identity services and configure role management
@@ -160,3 +160,22 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+
+
+// using (var scope = app.Services.CreateScope())
+// {
+//   var services = scope.ServiceProvider;
+//   try
+//   {
+//     var context = services.GetRequiredService<ApplicationDbContext>();
+//     context.Database.Migrate();
+//     PermissionSeeder.SeedPermissionsAsync(services).Wait();
+//     UserSeeder.SeedAdminUserAsync(services).Wait();
+//   }
+//   catch (Exception ex)
+//   {
+//     var logger2 = services.GetRequiredService<ILogger<Program>>();
+//     logger2.LogError(ex, "An error occurred seeding the DB.");
+//   }
+// }

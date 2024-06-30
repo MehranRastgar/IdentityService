@@ -2,6 +2,7 @@ version: "3.4"
 services:
   identityservice:
     container_name: identityservice
+    image: docker.levino.ir/identityservice:latest
     build:
       context: .
       dockerfile: Dockerfile
@@ -20,7 +21,13 @@ services:
       # - ./wwwroot/images:/src/wwwroot/images:rw
     networks:
       - identity-network
+      - fms-services_db
+      - fms-services_gw
 
 networks:
   identity-network:
+    external: true
+  fms-services_gw:
+    external: true
+  fms-services_db:
     external: true
