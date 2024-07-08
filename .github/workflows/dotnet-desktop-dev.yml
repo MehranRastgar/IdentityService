@@ -37,7 +37,7 @@ jobs:
           password: ${{ secrets.SERVER_PASSWORD_DEV }}
           port: 3360
           script: |
-            cd /home/aron/identityservices
+            cd /home/aron/identityservice
             docker compose  -f "docker-compose-dev.yml" -f "docker-compose.override.yml"  pull
             docker compose  -f "docker-compose-dev.yml" -f "docker-compose.override.yml"  up -d
 
