@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Login to DockerHub
-        run: echo "${{ secrets.DOCKER_PASSWORD_DEV }}" | docker login -u "${{ secrets.DOCKER_USERNAME_DEV }}" --password-stdin docker.levino.ir
+        run: echo "${{ secrets.DOCKER_PASSWORD_DEV }}" | docker login -u "${{ secrets.DOCKER_USERNAME_DEV }}" --password-stdin docker.sprun.ir
       - name: Build and Push
         run: |
           docker compose  build
