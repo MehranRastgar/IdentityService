@@ -19,8 +19,8 @@ jobs:
         run: echo "${{ secrets.DOCKER_PASSWORD_DEV }}" | docker login -u "${{ secrets.DOCKER_USERNAME_DEV }}" --password-stdin docker.sprun.ir
       - name: Build and Push
         run: |
-          docker compose  build
-          docker compose  push
+          docker compose -f "docker-compose-dev.yml" -f "docker-compose.override.yml"  build
+          docker compose -f "docker-compose-dev.yml" -f "docker-compose.override.yml"  push
   deploy:
     runs-on: ubuntu-latest
     needs: build
