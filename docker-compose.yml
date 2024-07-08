@@ -21,13 +21,13 @@ services:
       # - ./wwwroot/images:/src/wwwroot/images:rw
     networks:
       - identity-network
-      - fms-services_db
-      - fms-services_gw
+      - fms-backend-services_db
+      - fms-backend-services_gw
 
 networks:
   identity-network:
     external: true
-  fms-services_gw:
+  fms-backend-services_gw:
     external: true
-  fms-services_db:
+  fms-backend-services_db:
     external: true
