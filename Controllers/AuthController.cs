@@ -33,11 +33,19 @@ namespace IdentityService.Controllers
 
       var token = await _tokenService.GenerateTokenAsync(user);
 
+      // var cookieOptions = new CookieOptions
+      // {
+      //   HttpOnly = true,
+      //   Expires = DateTime.UtcNow.AddDays(1),
+      //   SameSite = SameSiteMode.Strict
+      // };
       var cookieOptions = new CookieOptions
       {
         HttpOnly = true,
         Expires = DateTime.UtcNow.AddDays(1),
-        SameSite = SameSiteMode.Strict
+        SameSite = SameSiteMode.None, //
+        Secure = true, //
+        Domain = "api.sprun.ir"
       };
 
       Response.Cookies.Append("jwt", token, cookieOptions);

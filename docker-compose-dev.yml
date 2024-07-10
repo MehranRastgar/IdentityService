@@ -2,7 +2,7 @@ version: "3.4"
 services:
   identityservice:
     container_name: identityservice
-    image: docker.sprun.ir/identityservice:latest
+    image: docker.sprun.ir/identityservice:v2
     build:
       context: .
       dockerfile: Dockerfile
