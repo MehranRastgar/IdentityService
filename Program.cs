@@ -37,7 +37,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+  options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Configure Redis
 builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>

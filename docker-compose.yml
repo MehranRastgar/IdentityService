@@ -2,7 +2,7 @@ version: "3.4"
 services:
   identityservice:
     container_name: identityservice
-    image: docker.levino.ir/identityservice:latest
+    image: docker.sprun.ir/identityservice:2.1
     build:
       context: .
       dockerfile: Dockerfile
