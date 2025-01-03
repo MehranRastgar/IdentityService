@@ -81,7 +81,7 @@ jobs:
             echo ${{ secrets.SERVER_PASSWORD }} | sudo -S docker pull localhost:2525/IdentityService:${{ github.sha }}
             echo ${{ secrets.SERVER_PASSWORD }} | sudo -S docker stop IdentityService || true
             echo ${{ secrets.SERVER_PASSWORD }} | sudo -S docker rm IdentityService || true
-            echo ${{ secrets.SERVER_PASSWORD }} | sudo -S docker run -d --name IdentityService -p 7032:7032 localhost:2525/IdentityService:${{ github.sha }}
+            echo ${{ secrets.SERVER_PASSWORD }} | sudo -S docker run -d --name IdentityService -p 7132:7132 -v ./Shared/Protos:/src/Shared/Protos:ro localhost:2525/IdentityService:${{ github.sha }}
             echo ${{ secrets.SERVER_PASSWORD }} | sudo -S docker network create --driver bridge gateway
             echo ${{ secrets.SERVER_PASSWORD }} | sudo -S docker network connect gateway IdentityService
             echo ${{ secrets.SERVER_PASSWORD }} | sudo -S docker network create --driver bridge redis
