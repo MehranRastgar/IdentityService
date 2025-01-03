@@ -86,7 +86,7 @@ builder.Services.AddCors(options =>
 {
   options.AddPolicy("MyCorsPolicy", builder =>
   {
-    builder.WithOrigins(["http://localhost:3000", "https://localhost:10502/", "http://sprun.ir", "https://sprun.ir", "http://localhost:10500"]) // Specify the allowed origin(s)
+    builder.WithOrigins(["http://localhost:3000", "https://localhost:10502/", "http://bugtech.ir", "http://localhost:10500"]) // Specify the allowed origin(s)
            .AllowAnyMethod()
            .AllowAnyHeader()
            .AllowCredentials(); // Adjust the policy according to your needs

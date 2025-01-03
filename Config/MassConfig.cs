@@ -9,33 +9,33 @@ using MailEvents;
 
 public static class MassTransitConfig
 {
-    public static void ConfigureMassTransit(IServiceCollection services, IConfiguration configuration)
+  public static void ConfigureMassTransit(IServiceCollection services, IConfiguration configuration)
+  {
+    services.AddMassTransit(x =>
     {
-        services.AddMassTransit(x =>
-        {
-            x.UsingRabbitMq((ctx, cfg) =>
-            {
-                cfg.Host("localhost", "/", h =>
-                {
-                    h.Username("hoopoe");
-                    h.Password("geDteDd0Ltg2135FJYQ6rjNYHYkGQa70");
-                });
-
-                cfg.Message<SmsEvent>(e =>
-                {
-                    e.SetEntityName("SmsEvents:OtpMessage");
-                });
-
-                cfg.Message<MailMessage>(e =>
-                {
-                    e.SetEntityName("MailEvents:MailMessage");
-                });
-
-                cfg.ConfigureEndpoints(ctx);
-
+      x.UsingRabbitMq((ctx, cfg) =>
+          {
+          cfg.Host("rabbitmq-ctcom", "/", h =>
+              {
+              h.Username("guest");
+              h.Password("guest");
             });
 
+          cfg.Message<SmsEvent>(e =>
+              {
+              e.SetEntityName("SmsEvents:OtpMessage");
+            });
+
+          cfg.Message<MailMessage>(e =>
+              {
+              e.SetEntityName("MailEvents:MailMessage");
+            });
+
+          cfg.ConfigureEndpoints(ctx);
+
         });
-  
-    }
+
+    });
+
+  }
 }
