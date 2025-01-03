@@ -13,31 +13,8 @@ env:
   BUILD_CONFIGURATION: "Release"
 
 jobs:
-  build:
-    name: Build and Test
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
-
-      - name: Restore dependencies
-        run: dotnet restore ./IdentityService/IdentityService.csproj
-
-      - name: Build project
-        run: dotnet build ./IdentityService/IdentityService.csproj --configuration ${{ env.BUILD_CONFIGURATION }}
-
-      # - name: Run tests
-      #   run: dotnet test --no-build --verbosity normal
-
   docker-build-and-push:
     name: Docker Build and Push
-    needs: build
     runs-on: ubuntu-latest
 
     steps:

@@ -22,7 +22,7 @@ RUN USER=app chown -R app:app /app
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "ctcom.product-service.dll", "--urls", "http://+:7132"]
+ENTRYPOINT ["dotnet", "IdentityService.dll", "--urls", "http://+:7132"]
 
 
 
