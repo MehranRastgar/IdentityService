@@ -37,11 +37,11 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: docker.levino.ir/IdentityService:${{ github.sha }}
+          tags: docker.levino.ir/identity-service:${{ github.sha }}
           build-args: |
             docker build \
             --build-arg BUILD_CONFIGURATION=${{ env.BUILD_CONFIGURATION }} \
-            -t ${{ secrets.DOCKER_USERNAME }}/IdentityService:${{ github.sha }} .
+            -t ${{ secrets.DOCKER_USERNAME }}/identity-service:${{ github.sha }} .
 
   deploy:
     runs-on: ubuntu-latest
@@ -55,13 +55,13 @@ jobs:
           password: ${{ secrets.SERVER_PASSWORD }}
           port: 2054
           script: |
-            echo ${{ secrets.SERVER_PASSWORD }} | sudo -S docker pull localhost:2525/IdentityService:${{ github.sha }}
-            echo ${{ secrets.SERVER_PASSWORD }} | sudo -S docker stop IdentityService || true
-            echo ${{ secrets.SERVER_PASSWORD }} | sudo -S docker rm IdentityService || true
-            echo ${{ secrets.SERVER_PASSWORD }} | sudo -S docker run -d --name IdentityService -p 7132:7132 -v ./Shared/Protos:/src/Shared/Protos:ro localhost:2525/IdentityService:${{ github.sha }}
+            echo ${{ secrets.SERVER_PASSWORD }} | sudo -S docker pull localhost:2525/identity-service:${{ github.sha }}
+            echo ${{ secrets.SERVER_PASSWORD }} | sudo -S docker stop identity-service || true
+            echo ${{ secrets.SERVER_PASSWORD }} | sudo -S docker rm identity-service || true
+            echo ${{ secrets.SERVER_PASSWORD }} | sudo -S docker run -d --name identity-service -p 7132:7132 -v ./Shared/Protos:/src/Shared/Protos:ro localhost:2525/IdentityService:${{ github.sha }}
             echo ${{ secrets.SERVER_PASSWORD }} | sudo -S docker network create --driver bridge gateway
-            echo ${{ secrets.SERVER_PASSWORD }} | sudo -S docker network connect gateway IdentityService
+            echo ${{ secrets.SERVER_PASSWORD }} | sudo -S docker network connect gateway identity-service
             echo ${{ secrets.SERVER_PASSWORD }} | sudo -S docker network create --driver bridge redis
-            echo ${{ secrets.SERVER_PASSWORD }} | sudo -S docker network connect redis IdentityService
+            echo ${{ secrets.SERVER_PASSWORD }} | sudo -S docker network connect redis identity-service
             echo ${{ secrets.SERVER_PASSWORD }} | sudo -S docker network create --driver bridge sql-server
-            echo ${{ secrets.SERVER_PASSWORD }} | sudo -S docker network connect sql-server IdentityService
+            echo ${{ secrets.SERVER_PASSWORD }} | sudo -S docker network connect sql-server identity-service
