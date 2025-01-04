@@ -59,10 +59,14 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IPermissionManager, PermissionManager>();
 builder.Services.AddScoped<IPermissionStoreService, PermissionStoreService>();
 builder.Services.AddScoped<IRedisService, RedisService>();
+builder.Services.AddScoped<IOTPService, OTPService>();
 
 // Register the SmsPanel
 builder.Services.AddScoped<SmsPanel>();
 builder.Services.AddScoped<MailPanel>();
+
+// Register OtpSms for dependency injection
+builder.Services.AddScoped<OtpSms>();
 
 MassTransitConfig.ConfigureMassTransit(builder.Services, builder.Configuration);
 

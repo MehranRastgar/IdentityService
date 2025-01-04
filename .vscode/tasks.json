@@ -1,0 +1,89 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "build",
+        "${workspaceFolder}/IdentityService.sln",
+        "--no-restore", // Avoid redundant restore if already restored
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary;ForceNoAlign"
+      ],
+      "problemMatcher": "$msCompile",
+      "group": "build", // Groups this task under the "build" category
+      "detail": "Builds the solution."
+    },
+    {
+      "label": "restore",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "restore",
+        "${workspaceFolder}/IdentityService.sln"
+      ],
+      "problemMatcher": [],
+      "group": "build",
+      "detail": "Restores NuGet packages for the solution."
+    },
+    {
+      "label": "publish",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "publish",
+        "${workspaceFolder}/IdentityService.sln",
+        "--configuration",
+        "Debug", // Publish in Release mode for better performance
+        "--output",
+        "${workspaceFolder}/publish", // Specify a clear output folder
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary;ForceNoAlign"
+      ],
+      "problemMatcher": "$msCompile",
+      "detail": "Publishes the solution to the output folder."
+    },
+    {
+      "label": "watch",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "watch",
+        "run",
+        "--project",
+        "${workspaceFolder}"
+      ],
+      "problemMatcher": [],
+      "detail": "Runs the project in watch mode for development."
+    },
+    {
+      "label": "clean",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "clean",
+        "${workspaceFolder}/IdentityService.sln"
+      ],
+      "problemMatcher": [],
+      "group": "build",
+      "detail": "Cleans the solution by removing build artifacts."
+    },
+    {
+      "label": "Prettify Logs",
+      "type": "shell",
+      "command": "cat ./logs.json | jq",
+      "problemMatcher": [],
+      "detail": "Prettify JSON logs using Git Bash",
+      "options": {
+        "shell": {
+          "executable": "C:\\Program Files\\Git\\bin\\bash.exe",
+          "args": [
+            "-c"
+          ]
+        }
+      }
+    }
+  ]
+}

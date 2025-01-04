@@ -104,8 +104,8 @@ namespace IdentityService
             new Claim(ClaimTypes.NameIdentifier, user.Id ?? throw new ArgumentNullException(nameof(user.Id))), // Ensure UserId is included
             new Claim("UserId", user.Id ?? throw new ArgumentNullException(nameof(user.Id))),
             new Claim("UserName", user.UserName ?? throw new ArgumentNullException(nameof(user.UserName))),
-            new Claim("IsSuperAdmin", user.IsSuperAdmin.ToString()), // if exist this field
-            new Claim("OrganizationId", user.OrganizationId?.ToString() ?? string.Empty) // if has organization
+            new Claim("IsSuperAdmin", user?.IsSuperAdmin.ToString()), // if exist this field
+            new Claim("OrganizationId", user?.OrganizationId?.ToString() ?? string.Empty) // if has organization
         };
 
       var userRoles = await _userManager.GetRolesAsync(user);
@@ -126,14 +126,14 @@ namespace IdentityService
         }
       }
 
-      if (user.OrganizationId.HasValue)
-      {
-        var orgIds = await _organizationGrpcClient.GetOrganizationAndSubOrganizationIdsAsync(user.OrganizationId.Value);
-        foreach (var id in orgIds)
-        {
-          claims.Add(new Claim("organizationId", id.ToString()));
-        }
-      }
+      // if (user?.OrganizationId != null)
+      // {
+      //   var orgIds = await _organizationGrpcClient.GetOrganizationAndSubOrganizationIdsAsync(user.OrganizationId.Value);
+      //   foreach (var id in orgIds)
+      //   {
+      //     claims.Add(new Claim("organizationId", id.ToString()));
+      //   }
+      // }
 
       var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key ?? throw new ArgumentNullException(nameof(jwtSettings.Key))));
       var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

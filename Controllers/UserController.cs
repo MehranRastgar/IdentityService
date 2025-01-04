@@ -27,8 +27,9 @@ namespace IdentityService.Controllers
     private readonly IMapper _mapper;
     private readonly ApplicationDbContext _context;
     private readonly IRoleService _roleService;
+    private readonly IOTPService _otpService;
 
-    public UserController(UserManager<ApplicationUser> userManager, ICustomUserService customUserService, IUserService userService, IMapper mapper, ApplicationDbContext context, IRoleService roleService)
+    public UserController(UserManager<ApplicationUser> userManager, ICustomUserService customUserService, IUserService userService, IMapper mapper, ApplicationDbContext context, IRoleService roleService, IOTPService otpService)
     {
 
       _userManager = userManager;
@@ -37,6 +38,7 @@ namespace IdentityService.Controllers
       _mapper = mapper;
       _context = context;
       _roleService = roleService;
+      _otpService = otpService;
     }
 
 
@@ -180,6 +182,34 @@ namespace IdentityService.Controllers
         currentPage = response.CurrentPage,
         pageSize = response.PageSize
       });
+    }
+
+    [HttpPost("request-otp")]
+    public async Task<IActionResult> RequestOtp([FromBody] OtpRequestModel model)
+    {
+      var result = await _otpService.GenerateOtpAsync(model.MobileNumber);
+      if (result)
+      {
+        return Ok(new { Message = "OTP sent successfully." });
+      }
+      return BadRequest(new { Message = "Failed to send OTP." });
+    }
+
+    [HttpPost("create")]
+    public async Task<IActionResult> CreateUser([FromBody] CreateUserModel model)
+    {
+      var isValidOtp = await _otpService.ValidateOtpAsync(model.MobileNumber, model.Otp);
+      if (!isValidOtp)
+      {
+        return BadRequest(new { Message = "Invalid OTP." });
+      }
+
+      var result = await _userService.CreateUserAsync(model.MobileNumber, model.Password, model.UserName);
+      if (result.Succeeded)
+      {
+        return Ok(new { Message = "User created successfully." });
+      }
+      return BadRequest(result.Errors);
     }
 
     // [HttpPost("{id}/permissions")]

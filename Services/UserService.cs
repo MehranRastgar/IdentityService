@@ -147,6 +147,16 @@ public class UserService : IUserService
     return await _userManager.CreateAsync(user, password);
   }
 
+
+  public async Task<IdentityResult> CreateUserAsync(CreateUserByPhoneDto createUserObject)
+  {
+    var user = new ApplicationUser
+    {
+      PhoneNumber = createUserObject.phone,
+      UserName = createUserObject.userName,
+    };
+    return await _userManager.CreateAsync(user, createUserObject.password);
+  }
   public async Task<IdentityResult> UpdateUserAsync(string userId, string newEmail, string newName)
   {
     var user = await _userManager.FindByIdAsync(userId);
