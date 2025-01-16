@@ -8,13 +8,15 @@ namespace IdentityService.Models.Dtos
 
   public class LoginOtpDto
   {
-    public string UserName { get; set; }
+    public string? UserName { get; set; }
+    public string? MobileNumber { get; set; }
     public string Code { get; set; }
   }
 
   public class RequestOtpDto
   {
-    public string UserName { get; set; }
+    public string? UserName { get; set; }
+    public string? MobileNumber { get; set; }
   }
 
   public class LoginMailDto

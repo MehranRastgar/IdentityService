@@ -9,6 +9,8 @@ using IdentityService;
 using System.Security.Cryptography;
 using SmsEvents;
 using MassTransit;
+using Microsoft.EntityFrameworkCore;
+using IdentityService.Data;
 
 namespace Otp.Controllers
 {
@@ -25,9 +27,11 @@ namespace Otp.Controllers
 
     private readonly SmsPanel _smsPanel;
 
-    public OtpController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ITokenService tokenService, OtpSms otpSms, IRedisService redisService, IPublishEndpoint publishEndpoint, SmsPanel smsPanel)
+    private readonly ApplicationDbContext _dbContext;
+    public OtpController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ITokenService tokenService, OtpSms otpSms, IRedisService redisService, IPublishEndpoint publishEndpoint, SmsPanel smsPanel, ApplicationDbContext dbContext)
     {
       _userManager = userManager;
+      _dbContext = dbContext;
       _publishEndpoint = publishEndpoint;
       _signInManager = signInManager;
       _tokenService = tokenService;
@@ -40,8 +44,17 @@ namespace Otp.Controllers
     [HttpPost("request-otp")]
     public async Task<IActionResult> RequestOtp([FromBody] RequestOtpDto requestOtpDto)
     {
-      var user = await _userManager.FindByNameAsync(requestOtpDto.UserName);
-      if (user == null)
+      ApplicationUser? user = null;
+      if (requestOtpDto?.UserName != null)
+        user = await _userManager.FindByNameAsync(requestOtpDto.UserName);
+      if (requestOtpDto?.MobileNumber != null)
+      {
+        IQueryable<ApplicationUser> user2 = _dbContext.Users.Where(u => u.MobileNumber == requestOtpDto.MobileNumber);
+        user = user2.FirstOrDefault();
+      }
+
+
+      if (user?.UserName == null)
       {
         return Unauthorized();
       }
@@ -80,7 +93,15 @@ namespace Otp.Controllers
     [HttpPost("login-otp")]
     public async Task<IActionResult> LoginOtp([FromBody] LoginOtpDto loginOtpDto)
     {
-      var user = await _userManager.FindByNameAsync(loginOtpDto.UserName);
+      ApplicationUser? user = null;
+
+      if (loginOtpDto?.UserName != null)
+        user = await _userManager.FindByNameAsync(loginOtpDto.UserName);
+      if (loginOtpDto?.MobileNumber != null)
+      {
+        IQueryable<ApplicationUser> user2 = _dbContext.Users.Where(u => u.MobileNumber == loginOtpDto.MobileNumber);
+        user = user2.FirstOrDefault();
+      }
       if (user == null)
       {
         return Unauthorized();
