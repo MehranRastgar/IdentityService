@@ -50,13 +50,13 @@ namespace Otp.Controllers
       var userName = user.UserName;
 
       // Generate a random 6-digit OTP code
-      // var otpCode = GenerateOtpCode();
-      string? otpCode = await _otpSms.SendOtpAsync(phoneNumber);
+      var otpCode = GenerateOtpCode();
+      await _otpSms.SendOtpAsync(phoneNumber, otpCode);
 
 
       // Store OTP in Redis with 2-minute expiration
       var redisKey = $"{userName}:{phoneNumber}";
-      await _redisService.SetValueAsync(redisKey, otpCode ?? "70070");
+      await _redisService.SetValueAsync(redisKey, otpCode);
       await _redisService.SetExpirationAsync(redisKey, TimeSpan.FromMinutes(2));
 
       // Produce OTP info to RMQ (RabbitMQ) - add your RabbitMQ publishing logic here

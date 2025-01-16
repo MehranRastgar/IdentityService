@@ -21,7 +21,7 @@ namespace IdentityService.Services
       var otp = new Random().Next(10000, 99999).ToString();
       await _redisDatabase.StringSetAsync(mobileNumber, otp, TimeSpan.FromMinutes(5));
 
-      await _otpSms.SendOtpAsync(mobileNumber);
+      await _otpSms.SendOtpAsync(mobileNumber, otp);
 
       return true;
     }

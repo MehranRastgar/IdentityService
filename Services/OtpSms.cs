@@ -6,10 +6,13 @@ using Newtonsoft.Json;
 
 public class OtpSms
 {
-  public async Task<string> SendOtpAsync(string mobileNumber)
+  public async Task<string> SendOtpAsync(string mobileNumber, string otp)
   {
+    string[] args = [otp];
     var postData = new
     {
+      args,
+      bodyId = 286145,
       to = mobileNumber,
     };
 
@@ -22,11 +25,11 @@ public class OtpSms
 
       try
       {
-        var response = await client.PostAsync("https://console.melipayamak.com/api/send/otp/22af6bb1402f4f5f8acb456c135e5c59", content);
+        var response = await client.PostAsync("https://console.melipayamak.com/api/send/shared/22af6bb1402f4f5f8acb456c135e5c59", content);
         response.EnsureSuccessStatusCode();
         var responseData = await response.Content.ReadAsStringAsync();
         var result = JsonConvert.DeserializeObject<dynamic>(responseData);
-        return result?.code;
+        return otp;
       }
       catch (Exception ex)
       {
