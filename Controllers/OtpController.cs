@@ -129,14 +129,16 @@ namespace Otp.Controllers
 
       var cookieOptions = new CookieOptions
       {
-        HttpOnly = true,
-        Expires = DateTime.UtcNow.AddDays(1),
-        SameSite = SameSiteMode.Strict
+        HttpOnly = false, // Prevents client-side JavaScript from accessing the cookie
+        SameSite = SameSiteMode.None, // Adjust based on your requirements
+        Secure = false, // Ensures the cookie is only sent over HTTPS (recommended for production)
+        IsEssential = false, // Marks the cookie as essential for the application
+        Path = "/"
       };
 
       Response.Cookies.Append("jwt", token, cookieOptions);
 
-      return Ok(new { message = "Logged in successfully" });
+      return Ok(new { message = "Logged in successfully", token });
     }
 
     private string GenerateOtpCode()
