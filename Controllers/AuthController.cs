@@ -4,6 +4,7 @@ using System;
 using System.Threading.Tasks;
 using IdentityService.Models;
 using IdentityService.Models.Dtos;
+using Microsoft.AspNetCore.Authorization;
 
 namespace IdentityService.Controllers
 {
@@ -50,6 +51,27 @@ namespace IdentityService.Controllers
     {
       Response.Cookies.Delete("jwt");
       return Ok(new { message = "Logged out successfully" });
+    }
+
+    [Authorize]
+    [HttpPost("auth-check")]
+    public async Task<IActionResult> AuthCheck()
+    {
+      var user = await _userManager.GetUserAsync(User);
+      if (user == null)
+      {
+        return Unauthorized();
+      }
+
+      var userData = new
+      {
+        user.UserName,
+        user.Email,
+        user.PhoneNumber,
+        user.AddressId,
+      };
+
+      return Ok(new { message = "Authenticated", user });
     }
   }
 }
