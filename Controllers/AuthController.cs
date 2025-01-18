@@ -57,7 +57,8 @@ namespace IdentityService.Controllers
     [HttpPost("auth-check")]
     public async Task<IActionResult> AuthCheck()
     {
-      var user = await _userManager.GetUserAsync(User);
+      var userName = GetUserNameFromToken();
+      var user = await _userManager.FindByNameAsync(userName);
       if (user == null)
       {
         return Unauthorized();
@@ -67,11 +68,16 @@ namespace IdentityService.Controllers
       {
         user.UserName,
         user.Email,
-        user.PhoneNumber,
+        user.MobileNumber,
         user.AddressId,
       };
 
-      return Ok(new { message = "Authenticated", user });
+      return Ok(new { message = "Authenticated", user = userData });
     }
+    private string GetUserNameFromToken()
+    {
+      return User?.Claims?.FirstOrDefault(c => c.Type == "UserName")?.Value;
+    }
+
   }
 }
