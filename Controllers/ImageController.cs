@@ -55,8 +55,9 @@ namespace IdentityService.Controllers
       {
         return NotFound("User or user image not found.");
       }
+      string ImageUrl = user.ImageUrl.Replace("/images/", "");
 
-      var imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", user.ImageUrl);
+      var imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", ImageUrl);
 
       if (!System.IO.File.Exists(imagePath))
       {
