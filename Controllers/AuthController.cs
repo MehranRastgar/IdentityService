@@ -66,6 +66,7 @@ namespace IdentityService.Controllers
 
       var userData = new
       {
+        user.Id,
         user.UserName,
         user.Email,
         user.MobileNumber,
