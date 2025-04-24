@@ -43,6 +43,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
 {
   var configuration = ConfigurationOptions.Parse(builder.Configuration.GetConnectionString("Redis"), true);
+  configuration.AbortOnConnectFail = false;
   return ConnectionMultiplexer.Connect(configuration);
 });
 
