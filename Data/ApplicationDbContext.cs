@@ -14,6 +14,8 @@ namespace IdentityService.Data
     public DbSet<RoleModel> Roles { get; set; }
     public DbSet<Permission> Permissions { get; set; }
     public DbSet<AddressModel> Addresses { get; set; }
+    public DbSet<BodyShape> BodyShapes { get; set; }
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
       base.OnModelCreating(builder);

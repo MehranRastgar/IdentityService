@@ -30,6 +30,7 @@ namespace IdentityService.Models
     
     public string? ActivityLevel { get; set; }  // sedentary, light, moderate, active, very_active
     public string? Goal { get; set; }  // lose_weight, gain_muscle, maintain, improve_fitness
+    public string? BodyShapeId { get; set; }  // Reference to BodyShape
   }
   public class CreateUserByPhoneDto
   {

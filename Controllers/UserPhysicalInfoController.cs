@@ -35,7 +35,8 @@ namespace IdentityService.Controllers
                 Height = user.Height ?? 0,
                 Weight = user.Weight ?? 0,
                 ActivityLevel = user.ActivityLevel ?? "sedentary",
-                Goal = user.Goal ?? "improve_fitness"
+                Goal = user.Goal ?? "improve_fitness",
+                BodyShapeId = user.BodyShapeId
             };
 
             return Ok(physicalInfo);
@@ -56,6 +57,7 @@ namespace IdentityService.Controllers
             user.Weight = model.Weight;
             user.ActivityLevel = model.ActivityLevel;
             user.Goal = model.Goal;
+            user.BodyShapeId = model.BodyShapeId;
 
             var result = await _userManager.UpdateAsync(user);
             if (!result.Succeeded)

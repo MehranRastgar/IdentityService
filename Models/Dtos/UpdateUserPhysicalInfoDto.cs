@@ -27,5 +27,7 @@ namespace IdentityService.Models.Dtos
         [Required]
         [RegularExpression("^(lose_weight|gain_muscle|maintain|improve_fitness)$")]
         public string Goal { get; set; } = null!;
+        
+        public string? BodyShapeId { get; set; }
     }
 } 
