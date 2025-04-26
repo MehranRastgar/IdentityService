@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using System.Collections.Generic;
 using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace IdentityService.Models
 {
@@ -17,7 +18,18 @@ namespace IdentityService.Models
     public int? OrganizationId { get; set; }
     public bool IsSuperAdmin { get; set; } = false;
 
-
+    // Physical Information
+    public int? Age { get; set; }
+    public string? Gender { get; set; }  // male, female
+    
+    [Column(TypeName = "decimal(5,2)")]
+    public decimal? Height { get; set; }  // in centimeters
+    
+    [Column(TypeName = "decimal(5,2)")]
+    public decimal? Weight { get; set; }  // in kilograms
+    
+    public string? ActivityLevel { get; set; }  // sedentary, light, moderate, active, very_active
+    public string? Goal { get; set; }  // lose_weight, gain_muscle, maintain, improve_fitness
   }
   public class CreateUserByPhoneDto
   {
