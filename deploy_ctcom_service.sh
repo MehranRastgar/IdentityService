@@ -2,14 +2,14 @@
 
 # Define variables
 IMAGE_TAG="v1"
-IMAGE_NAME="ctcom.product-service:$IMAGE_TAG"
-CONTAINER_NAME="ctcom.product-service"
-HOST_PORT=7128
-CONTAINER_PORT=7128
-UPLOADS_VOLUME="uploads_volume"
+IMAGE_NAME="identity-service:$IMAGE_TAG"
+CONTAINER_NAME="identity-service"
+HOST_PORT=7132
+CONTAINER_PORT=7132
+UPLOADS_VOLUME="identity_uploads_volume"
 
 # build image
-docker build -t ctcom.product-service:v1 . 
+docker build -t identity-service:v1 . 
 
 # Stop and remove any existing container with the same name
 docker stop $CONTAINER_NAME || true
@@ -33,5 +33,5 @@ echo "Deployment of $CONTAINER_NAME completed successfully."
 
 
 
-#chmod +x deploy_ctcom_service.sh
-#./deploy_ctcom_service.sh
+#chmod +x deploy_identity_service.sh
+#./deploy_identity_service.sh
