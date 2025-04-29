@@ -36,9 +36,10 @@ namespace IdentityService.Controllers
 
       var cookieOptions = new CookieOptions
       {
-        HttpOnly = false,
+        HttpOnly = true,
         Expires = DateTime.UtcNow.AddDays(30),
-        SameSite = SameSiteMode.None
+        SameSite = SameSiteMode.None,
+        Secure = true
       };
 
       Response.Cookies.Append("jwt", token, cookieOptions);
