@@ -143,6 +143,20 @@ using (var scope = app.Services.CreateScope())
   }
 }
 
+
+app.Use(async (context, next) =>
+{
+  var authHeader = context.Request.Headers["Authorization"].FirstOrDefault();
+  if (!string.IsNullOrEmpty(authHeader) && authHeader.StartsWith("Bearer "))
+  {
+    var token = authHeader.Substring("Bearer ".Length).Trim();
+    context.Request.Headers["Cookie"] = $"jwt={token}";
+  }
+
+  await next();
+});
+
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
