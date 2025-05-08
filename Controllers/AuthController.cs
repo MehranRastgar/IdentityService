@@ -44,7 +44,11 @@ namespace IdentityService.Controllers
 
       Response.Cookies.Append("jwt", token, cookieOptions);
 
-      return Ok(new { message = "Logged in successfully" });
+      return Ok(new
+      {
+        message = "Logged in successfully",
+        token = token
+      });
     }
 
     [HttpPost("logout")]
