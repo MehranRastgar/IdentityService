@@ -46,7 +46,7 @@ namespace IdentityService.Controllers
     [Authorize]
     public async Task<IActionResult> GetMe()
     {
-      var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+      var userId = User?.Claims?.FirstOrDefault(c => c.Type == "UserId")?.Value;
       if (userId == null)
       {
         return Unauthorized("User ID not found in token.");
