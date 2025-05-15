@@ -192,6 +192,37 @@ namespace Otp.Controllers
       return Ok(new { message = "Logged in successfully", token });
     }
 
+    [HttpPost("request-registration-otp")]
+    public async Task<IActionResult> RequestRegistrationOtp([FromBody] RequestOtpDto requestOtpDto)
+    {
+        if (string.IsNullOrEmpty(requestOtpDto?.MobileNumber))
+            return BadRequest(new { message = "Mobile number is required" });
+
+        // Check if user already exists
+        var existingUser = await _dbContext.Users.FirstOrDefaultAsync(u => u.MobileNumber == requestOtpDto.MobileNumber);
+        if (existingUser != null)
+            return BadRequest(new { message = "User with this mobile number already exists" });
+
+        var phoneNumber = requestOtpDto.MobileNumber;
+        // Generate a random 6-digit OTP code
+        var otpCode = GenerateOtpCode();
+        await _otpSms.SendOtpAsync(phoneNumber, otpCode);
+        // Store OTP in Redis with 2-minute expiration (keyed by mobile number)
+        var redisKey = $"otp:{phoneNumber}";
+        await _redisService.SetValueAsync(redisKey, otpCode);
+        await _redisService.SetExpirationAsync(redisKey, TimeSpan.FromMinutes(2));
+        // Produce OTP info to RMQ (RabbitMQ)
+        var messageInfo = new SmsEvent
+        {
+            Message = otpCode,
+            PhoneNumbers = new string[] { phoneNumber },
+            Timestamp = DateTime.UtcNow,
+            CorrelationId = Guid.NewGuid().ToString()
+        };
+        var result = await _smsPanel.ProduceSms(messageInfo, _publishEndpoint);
+        return Ok(new { message = "OTP code sent successfully" });
+    }
+
     private string GenerateOtpCode()
     {
       using (var rng = new RNGCryptoServiceProvider())
