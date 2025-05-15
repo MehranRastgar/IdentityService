@@ -41,6 +41,45 @@ namespace Otp.Controllers
 
     }
 
+    [HttpPost("register-otp")]
+    public async Task<IActionResult> RegisterWithOtp([FromBody] RegisterWithOtpDto dto)
+    {
+        if (dto == null || string.IsNullOrEmpty(dto.MobileNumber) || string.IsNullOrEmpty(dto.OtpCode) || string.IsNullOrEmpty(dto.Name) || string.IsNullOrEmpty(dto.Family))
+            return BadRequest(new { message = "Missing required fields" });
+
+        // Check if user already exists
+        var existingUser = await _dbContext.Users.FirstOrDefaultAsync(u => u.MobileNumber == dto.MobileNumber);
+        if (existingUser != null)
+            return BadRequest(new { message = "User with this mobile number already exists" });
+
+        // Check OTP
+        var redisKey = $"otp:{dto.MobileNumber}";
+        var storedOtpCode = await _redisService.GetValueAsync(redisKey);
+        if (string.IsNullOrEmpty(storedOtpCode) || storedOtpCode != dto.OtpCode)
+            return BadRequest(new { message = "Invalid or expired OTP code" });
+
+        // Create user (no password)
+        var user = new ApplicationUser
+        {
+            UserName = dto.MobileNumber, // or generate a username
+            Name = dto.Name,
+            Family = dto.Family,
+            MobileNumber = dto.MobileNumber,
+            PhoneNumber = dto.MobileNumber,
+            PhoneNumberConfirmed = true
+        };
+
+        var result = await _userManager.CreateAsync(user);
+        if (!result.Succeeded)
+            return BadRequest(new { message = "Failed to create user", errors = result.Errors });
+
+        // Remove OTP from Redis after successful registration
+        // TODO: Remove OTP from Redis (no RemoveAsync method in IRedisService)
+        // await _redisService.RemoveAsync(redisKey);
+
+        return Ok(new { message = "User registered successfully" });
+    }
+
     [HttpPost("request-otp")]
     public async Task<IActionResult> RequestOtp([FromBody] RequestOtpDto requestOtpDto)
     {
@@ -53,40 +92,52 @@ namespace Otp.Controllers
         user = user2.FirstOrDefault();
       }
 
+      // For registration, allow sending OTP even if user does not exist
+      if (user == null && !string.IsNullOrEmpty(requestOtpDto?.MobileNumber))
+      {
+        var phoneNumber = requestOtpDto.MobileNumber;
+        // Generate a random 6-digit OTP code
+        var otpCode = GenerateOtpCode();
+        await _otpSms.SendOtpAsync(phoneNumber, otpCode);
+        // Store OTP in Redis with 2-minute expiration (keyed by mobile number)
+        var redisKey = $"otp:{phoneNumber}";
+        await _redisService.SetValueAsync(redisKey, otpCode);
+        await _redisService.SetExpirationAsync(redisKey, TimeSpan.FromMinutes(2));
+        // Produce OTP info to RMQ (RabbitMQ)
+        var messageInfo = new SmsEvent
+        {
+          Message = otpCode,
+          PhoneNumbers = new string[] { phoneNumber },
+          Timestamp = DateTime.UtcNow,
+          CorrelationId = Guid.NewGuid().ToString()
+        };
+        var result = await _smsPanel.ProduceSms(messageInfo, _publishEndpoint);
+        return Ok(new { message = "OTP code sent successfully" });
+      }
 
       if (user?.UserName == null)
       {
         return Unauthorized();
       }
 
-      var phoneNumber = user.MobileNumber;
+      var phone = user.MobileNumber;
       var userName = user.UserName;
-
       // Generate a random 6-digit OTP code
-      var otpCode = GenerateOtpCode();
-      await _otpSms.SendOtpAsync(phoneNumber, otpCode);
-
-
-      // Store OTP in Redis with 2-minute expiration
-      var redisKey = $"{userName}:{phoneNumber}";
-      await _redisService.SetValueAsync(redisKey, otpCode);
-      await _redisService.SetExpirationAsync(redisKey, TimeSpan.FromMinutes(2));
-
-      // Produce OTP info to RMQ (RabbitMQ) - add your RabbitMQ publishing logic here
-      var messageInfo = new SmsEvent
+      var code = GenerateOtpCode();
+      await _otpSms.SendOtpAsync(phone, code);
+      // Store OTP in Redis with 2-minute expiration (keyed by mobile number)
+      var redisKey2 = $"otp:{phone}";
+      await _redisService.SetValueAsync(redisKey2, code);
+      await _redisService.SetExpirationAsync(redisKey2, TimeSpan.FromMinutes(2));
+      // Produce OTP info to RMQ (RabbitMQ)
+      var messageInfo2 = new SmsEvent
       {
-        Message = otpCode,
-        PhoneNumbers = new string[] { phoneNumber },
+        Message = code,
+        PhoneNumbers = new string[] { phone },
         Timestamp = DateTime.UtcNow,
         CorrelationId = Guid.NewGuid().ToString()
       };
-      var result = await _smsPanel.ProduceSms(messageInfo, _publishEndpoint);
-
-      //temp sms service
-
-
-
-
+      var result2 = await _smsPanel.ProduceSms(messageInfo2, _publishEndpoint);
       return Ok(new { message = "OTP code sent successfully" });
     }
 
