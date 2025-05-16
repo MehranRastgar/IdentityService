@@ -76,8 +76,9 @@ namespace Otp.Controllers
       // Remove OTP from Redis after successful registration
       // TODO: Remove OTP from Redis (no RemoveAsync method in IRedisService)
       // await _redisService.RemoveAsync(redisKey);
+      var token = await _tokenService.GenerateTokenAsync(user);
 
-      return Ok(new { message = "User registered successfully" });
+      return Ok(new { message = "User registered successfully", token });
     }
 
 
